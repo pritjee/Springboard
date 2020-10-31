@@ -67,6 +67,11 @@ Sol-SELECT firstname, surname, MAX( joindate )
 Include in your output the name of the court, and the name of the member
 formatted as a single column. Ensure no duplicate data, and order by
 the member name. */
+Sol-SELECT DISTINCT (
+    m.firstname), m.surname, f.name AS court
+    FROM Facilities AS f
+    JOIN Members AS m ON m.memid = f.facid
+    WHERE facid =0 OR facid =1;
 
 
 /* Q8: Produce a list of bookings on the day of 2012-09-14 which
@@ -75,9 +80,20 @@ different costs to members (the listed costs are per half-hour 'slot'), and
 the guest user's ID is always 0. Include in your output the name of the
 facility, the name of the member formatted as a single column, and the cost.
 Order by descending cost, and do not use any subqueries. */
+Sol-SELECT f.name AS facility, m.firstname, m.surname
+    FROM Facilities AS f
+    JOIN Members AS m ON f.facid = m.memid
+    WHERE membercost >30
+    OR guestcost >30
+    AND joindate = '2012-09-14';
 
 
 /* Q9: This time, produce the same result as in Q8, but using a subquery. */
+Sol- SELECT f.name AS facility, m.firstname, m.surname
+     FROM Facilities AS f
+     JOIN Members AS m ON f.facid = m.memid
+     WHERE(SELECT m.joindate,f.membercost,f.guestcost FROM Members AS m JOIN Facilities AS f
+     WHERE guestcost>30 OR membercost>30 AND joindate='2012-09-14' );
 
 
 /* PART 2: SQLite
@@ -99,12 +115,25 @@ QUESTIONS:
 /* Q10: Produce a list of facilities with a total revenue less than 1000.
 The output of facility name and total revenue, sorted by revenue. Remember
 that there's a different cost for guests and members! */
+    Sol-SELECT name, initialoutlay AS revenue
+        FROM Facilities
+        WHERE initialoutlay <1000;
 
 /* Q11: Produce a report of members and who recommended them in alphabetic surname,firstname order */
-
+SOL-SELECT firstname, surname, recommendedby
+    FROM Members
+    ORDER BY firstname, surname;
 
 /* Q12: Find the facilities with their usage by member, but not guests */
 
-
+Sol-SELECT m.firstname, m.surname, f.name
+    FROM Members AS m
+    JOIN Facilities AS f ON m.memid = f.facid
+    WHERE memid <>0;
 /* Q13: Find the facilities usage by month, but not guests */
+Sol-    SELECT f.facid, f.name, m.joindate
+        FROM Facilities AS f
+        JOIN Members AS m ON f.facid = m.memid
+        WHERE memid <>0
+        ORDER BY joindate;
 
